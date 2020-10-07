@@ -4,17 +4,10 @@ import TableBody from './TableBody';
 const Table = (props) => {
     const [sortConfig, setSortConfig] = React.useState(null);
     const {libraryData} = props;
+
     var sortedData = [...libraryData];
 
-    const requestSort = key => {
-        let direction = 'ascending';
-        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-          direction = 'descending';
-        }
-        setSortConfig({ key, direction });
-      }
-
-      if (sortConfig != null) {
+    if (sortConfig != null) {
         sortedData.sort((a, b) => {
             if (a[sortConfig.key] < b[sortConfig.key]) {
                 return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -25,6 +18,16 @@ const Table = (props) => {
             return 0;
         });
     }
+
+    const requestSort = key => {
+        let direction = 'ascending';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+          direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    }
+
+
     return(
         <React.Fragment>
             <table>
