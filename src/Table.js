@@ -1,15 +1,14 @@
 import React from 'react';
 import TableBody from './TableBody';
 
-const Table = (props) => {
-    const [sortConfig, setSortConfig] = React.useState(null);
-    const {libraryData} = props;
+const useSortableTableData = (items, config = null) => {
+    const [sortConfig, setSortConfig] = React.useState(config);
 
-    var tableData = React.useMemo(() => {
-        var sortedData = [...libraryData];
+    const sortedItems = React.useMemo(() => {
+        var sortableItems = [...items];
 
         if (sortConfig != null) {
-            sortedData.sort((a, b) => {
+            sortableItems.sort((a, b) => {
                 if (a[sortConfig.key] < b[sortConfig.key]) {
                     return sortConfig.direction === 'ascending' ? -1 : 1;
                 }
@@ -20,31 +19,44 @@ const Table = (props) => {
             });
         }
 
-        return sortedData;
-    }, [libraryData, sortConfig]);
+        return sortableItems;
+    }, [items, sortConfig]);
 
     const requestSort = key => {
         let direction = 'ascending';
         if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-          direction = 'descending';
+            direction = 'descending';
         }
+
         setSortConfig({ key, direction });
     }
 
+    return {items: sortedItems, requestSort, sortConfig};
+}
 
+const Table = (props) => {
+    const {libraryData} = props;
+    const {items, requestSort, sortConfig} = useSortableTableData(libraryData);
+
+    const getClassNamesFor = (name) => {
+        if (!sortConfig) {
+            return;
+        }
+        return sortConfig.key === name ? sortConfig.direction : undefined;
+    };
+    
     return(
-        <React.Fragment>
-            <table>
-                <thead>
-                    <tr>
-                        <th><button type="button" onClick={() => requestSort('title')}>Title</button></th>
-                        <th><button type="button" onClick={() => requestSort('author')}>Author</button></th>
-                    </tr>
-                </thead>
-                <TableBody libraryData = {tableData}/>
-            </table>
-        </React.Fragment>
-    )
+        <table>
+            <caption>Böcker</caption>
+            <thead>
+                <tr>
+                    <th><button type="button" onClick={() => requestSort('title')} className={getClassNamesFor('title')}>Title</button></th>
+                    <th><button type="button" onClick={() => requestSort('author')} className={getClassNamesFor('author')}>Author</button></th>
+                </tr>
+            </thead>
+            <TableBody libraryData = {items}/>
+        </table>
+    );
 }
 
 export default Table;
