@@ -6,6 +6,9 @@ const TableBody = (props) => {
             <tr key={index}>
                 <td>{row.title}</td>
                 <td>{row.author}</td>
+                <td>
+                    <button onClick={() => props.removeBook(index)}>Delete</button>
+                </td>
             </tr>
         );
     });
