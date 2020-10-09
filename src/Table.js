@@ -1,5 +1,6 @@
 import React from 'react';
 import TableBody from './TableBody';
+import TableHead from './TableHead';
 
 const useSortableTableData = (items, config = null) => {
     const [sortConfig, setSortConfig] = React.useState(config);
@@ -35,7 +36,8 @@ const useSortableTableData = (items, config = null) => {
 }
 
 const Table = (props) => {
-    const {libraryData} = props;
+    const {libraryData, removeBook} = props;
+
     const {items, requestSort, sortConfig} = useSortableTableData(libraryData);
 
     const getClassNamesFor = (name) => {
@@ -48,13 +50,8 @@ const Table = (props) => {
     return(
         <table>
             <caption>Böcker</caption>
-            <thead>
-                <tr>
-                    <th><button type="button" onClick={() => requestSort('title')} className={getClassNamesFor('title')}>Title</button></th>
-                    <th><button type="button" onClick={() => requestSort('author')} className={getClassNamesFor('author')}>Author</button></th>
-                </tr>
-            </thead>
-            <TableBody libraryData = {items}/>
+            <TableHead getClassNamesFor={getClassNamesFor} requestSort={requestSort}/>
+            <TableBody libraryData = {items} removeBook = {removeBook}/>
         </table>
     );
 }
