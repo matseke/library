@@ -24,7 +24,7 @@ thead button {
 }
 
 thead button.ascending::after {
-  content: '👇';
+  content: '☟';
   display: inline-block;
   margin-left: 1em;
 }
