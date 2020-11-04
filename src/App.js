@@ -1,35 +1,45 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import Table from './Table';
 import Form from './Form';
 import Pagination from './components/Pagination';
 
-class App extends Component {
-  state = {
-    library: [
-      // {
-      //   title: 'Ronja',
-      //   author: 'Astrid Lindgren',
-      //   id: 1254
-      // },
-      // {
-      //   title: 'Emil i Lönneberga',
-      //   author: 'Astrid Lindgren',
-      //   id: 4264
-      // },
-      // {
-      //   title: 'Harry Potter',
-      //   author: 'J.K Rowling',
-      //   id: 3245
-      // }
-    ],
-    currentBooks: [],
-    currentPage: null,
-    totalPages: null,
-  };
+const useSortableTableData = (items, config = null) => {
+  const [sortConfig, setSortConfig] = useState(config);
 
-  componentDidMount() {
-    const library = [{
+  const sortedItems = React.useMemo(() => {
+      var sortableItems = [...items];
+
+      if (sortConfig != null) {
+          sortableItems.sort((a, b) => {
+              if (a[sortConfig.key] < b[sortConfig.key]) {
+                  return sortConfig.direction === 'ascending' ? -1 : 1;
+              }
+              if (a[sortConfig.key] > b[sortConfig.key]) {
+                  return sortConfig.direction === 'ascending' ? 1 : -1;
+              }
+              return 0;
+          });
+      }
+
+      return sortableItems;
+  }, [items, sortConfig]);
+
+  const requestSort = key => {
+      let direction = 'ascending';
+      if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+          direction = 'descending';
+      }
+
+      setSortConfig({ key, direction });
+  }
+
+  return {items: sortedItems, requestSort, sortConfig};
+}
+
+  const App = () => {
+
+    const books = [{
       title: 'Ronja',
       author: 'Astrid Lindgren',
       id: 1254
@@ -63,60 +73,57 @@ class App extends Component {
       title: 'Nalle Puh',
       author: 'A A Milne',
       id: 3246
-    }
-  ];
+    }];
 
-    this.setState({ library });
-  }
+  var library = [...books];
+  const {items, requestSort, sortConfig} = useSortableTableData(library);
 
-  onPageChanged = data => {
-    const { library } = this.state;
+  const [currentBooks, setCurrentBooks] = useState([]);
+  var currentPageX = 1;
+  var totalPagesX = 0;
+
+  const onPageChanged = data => {
     const { currentPage, totalPages, pageLimit } = data;
     const offset = (currentPage - 1) * pageLimit;
-    const currentBooks = library.slice(offset, offset + pageLimit);
+    setCurrentBooks(items.slice(offset, offset + pageLimit));
+    currentPageX = currentPage;
+    totalPagesX = totalPages;
 
-    this.setState({ currentPage, currentBooks, totalPages });
-    console.log('library: ' + library + ' currentBooks:' + currentBooks + ' currentPage:' + currentPage + ' offset: ' + offset + ' pagelimit: ' + pageLimit + ' TotalPages: ' + totalPages);
+    console.log('library: ' + library + ' currentBooks:' + currentBooks + ' currentPage:' + currentPage + ' offset: ' + offset + ' pagelimit: ' + pageLimit + ' TotalPages: ' + totalPages + ' sortconfig: ' + sortConfig);
   }
 
-  removeBook = (index) => {
-    const {library} = this.state;
-
-    this.setState({
-      library: library.filter((book, i) => {
+  const removeBook = (index) => {
+    library =
+      library.filter((book, i) => {
         return i !== index
-      }),
-    });
+      })
+    ;
   }
 
-  handleSubmit = (book) => {
-    this.setState({library: [...this.state.library, book]});
-    this.setState({currentPage: null});
+  const handleSubmit = (book) => {
+    library = [...library, book];
+    currentPageX = null; 
   }
   
-  render() {
-    const { library, currentBooks, currentPage, totalPages } = this.state;
-    const totalBooks = library.length;
-
-    if (totalBooks === 0) return null;
-        
-    return (
+  const totalBooks = library.length;
+  if (totalBooks === 0) return null;
+  return (
       <div className="App">
         <h1>Hello again, Mats!</h1>
-        <Table libraryData={currentBooks} removeBook={this.removeBook}/>
-        { currentPage && (
+        <Table libraryData={currentBooks} removeBook={removeBook} requestSort={requestSort} sortConfig={sortConfig}/>
+        { currentPageX && (
                 <span className="current-page d-inline-block h-100 pl-4 text-secondary">
-                  sida <span className="font-weight-bold">{ currentPage }</span> / <span className="font-weight-bold">{ totalPages }</span>
+                  sida <span className="font-weight-bold">{ currentPageX }</span> / <span className="font-weight-bold">{ totalPagesX }</span>
                 </span>
               )
         }
-        <Form handleSubmit={this.handleSubmit}/>
+        <Form handleSubmit={handleSubmit}/>
         <div className="d-flex flex-row py-4 align-items-center">
-          <Pagination totalRecords={totalBooks} pageLimit={3} pageNeighbours={1} onPageChanged={this.onPageChanged} />
+          <Pagination totalRecords={totalBooks} pageLimit={3} pageNeighbours={1} onPageChanged={onPageChanged} />
         </div>
       </div>
-    );
-  }
+  );
+  
 }
   
   export default App;

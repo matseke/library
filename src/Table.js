@@ -2,43 +2,43 @@ import React from 'react';
 import TableBody from './TableBody';
 import TableHead from './TableHead';
 
-const useSortableTableData = (items, config = null) => {
-    const [sortConfig, setSortConfig] = React.useState(config);
+// const useSortableTableData = (items, config = null) => {
+//     const [sortConfig, setSortConfig] = React.useState(config);
 
-    const sortedItems = React.useMemo(() => {
-        var sortableItems = [...items];
+//     const sortedItems = React.useMemo(() => {
+//         var sortableItems = [...items];
 
-        if (sortConfig != null) {
-            sortableItems.sort((a, b) => {
-                if (a[sortConfig.key] < b[sortConfig.key]) {
-                    return sortConfig.direction === 'ascending' ? -1 : 1;
-                }
-                if (a[sortConfig.key] > b[sortConfig.key]) {
-                    return sortConfig.direction === 'ascending' ? 1 : -1;
-                }
-                return 0;
-            });
-        }
+//         if (sortConfig != null) {
+//             sortableItems.sort((a, b) => {
+//                 if (a[sortConfig.key] < b[sortConfig.key]) {
+//                     return sortConfig.direction === 'ascending' ? -1 : 1;
+//                 }
+//                 if (a[sortConfig.key] > b[sortConfig.key]) {
+//                     return sortConfig.direction === 'ascending' ? 1 : -1;
+//                 }
+//                 return 0;
+//             });
+//         }
 
-        return sortableItems;
-    }, [items, sortConfig]);
+//         return sortableItems;
+//     }, [items, sortConfig]);
 
-    const requestSort = key => {
-        let direction = 'ascending';
-        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-            direction = 'descending';
-        }
+//     const requestSort = key => {
+//         let direction = 'ascending';
+//         if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+//             direction = 'descending';
+//         }
 
-        setSortConfig({ key, direction });
-    }
+//         setSortConfig({ key, direction });
+//     }
 
-    return {items: sortedItems, requestSort, sortConfig};
-}
+//     return {items: sortedItems, requestSort, sortConfig};
+// }
 
 const Table = (props) => {
-    const {libraryData, removeBook} = props;
+    const {libraryData, removeBook, requestSort, sortConfig} = props;
 
-    const {items, requestSort, sortConfig} = useSortableTableData(libraryData);
+    //const {items, requestSort, sortConfig} = useSortableTableData(libraryData);
 
     const getClassNamesFor = (name) => {
         if (!sortConfig) {
@@ -51,7 +51,7 @@ const Table = (props) => {
         <table>
             <caption>Böcker</caption>
             <TableHead getClassNamesFor={getClassNamesFor} requestSort={requestSort}/>
-            <TableBody libraryData = {items} removeBook = {removeBook}/>
+            <TableBody libraryData = {libraryData} removeBook = {removeBook}/>
         </table>
     );
 }
