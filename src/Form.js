@@ -4,6 +4,7 @@ class Form extends React.Component {
   initialState = {
     title: '',
     author: '',
+    id: Math.floor(Math.random() * 1000),
   }
 
   state = this.initialState;
@@ -26,14 +27,14 @@ class Form extends React.Component {
   
     return (
       <form>
-        <label htmlFor="title">Name</label>
+        <label htmlFor="title">Title</label>
         <input
           type="text"
           name="title"
           id="title"
           value={title}
           onChange={this.handleChange} />
-        <label htmlFor="author">Job</label>
+        <label htmlFor="author">Author</label>
         <input
           type="text"
           name="author"

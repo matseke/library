@@ -49,7 +49,7 @@ const Table = (props) => {
     
     return(
         <table>
-            <caption>Böcker</caption>
+            <caption>Books</caption>
             <TableHead getClassNamesFor={getClassNamesFor} requestSort={requestSort}/>
             <TableBody libraryData = {libraryData} removeBook = {removeBook}/>
         </table>

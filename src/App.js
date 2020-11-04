@@ -75,7 +75,7 @@ const useSortableTableData = (items, config = null) => {
       id: 3246
     }];
 
-  var library = [...books];
+  const [library, setLibrary] = useState(books);
   const {items, requestSort, sortConfig} = useSortableTableData(library);
 
   const [currentBooks, setCurrentBooks] = useState([]);
@@ -92,16 +92,16 @@ const useSortableTableData = (items, config = null) => {
     console.log('library: ' + library + ' currentBooks:' + currentBooks + ' currentPage:' + currentPage + ' offset: ' + offset + ' pagelimit: ' + pageLimit + ' TotalPages: ' + totalPages + ' sortconfig: ' + sortConfig);
   }
 
-  const removeBook = (index) => {
-    library =
+  const removeBook = (id) => {
+    setLibrary(
       library.filter((book, i) => {
-        return i !== index
+        return book.id !== id
       })
-    ;
+    );
   }
 
   const handleSubmit = (book) => {
-    library = [...library, book];
+    setLibrary([...library, book]);
     currentPageX = null; 
   }
   
